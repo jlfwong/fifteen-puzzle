@@ -1,5 +1,5 @@
 (function() {
-  var ABOVE, BELOW, CELL_SIZE, Grid, INIT_GRID, LEFT, PuzzleCellView, PuzzleGridView, RIGHT, directionToDelta;
+  var ABOVE, BELOW, CELL_SIZE, Grid, INIT_GRID, LEFT, PuzzleCellView, PuzzleGridView, RIGHT, directionToDelta, randomMoveList;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   CELL_SIZE = 100;
   ABOVE = 0;
@@ -123,14 +123,70 @@
         this.grid.push(_.clone(row));
       }
     }
+    Grid.prototype.validMoves = function() {
+      var colNum, rowNum, valid, _ref;
+      _ref = this.emptyPos, rowNum = _ref[0], colNum = _ref[1];
+      valid = [];
+      if (colNum !== 0) {
+        valid.push(LEFT);
+      }
+      if (colNum !== 3) {
+        valid.push(RIGHT);
+      }
+      if (rowNum !== 0) {
+        valid.push(ABOVE);
+      }
+      if (rowNum !== 3) {
+        valid.push(BELOW);
+      }
+      return valid;
+    };
+    Grid.prototype.applyMoveFrom = function(sourceDirection) {
+      var deltaCol, deltaRow, emptyPos, grid, row, sourceCol, sourceRow, targetCol, targetRow, _i, _len, _ref, _ref2, _ref3, _ref4;
+      _ref = this.emptyPos, targetRow = _ref[0], targetCol = _ref[1];
+      _ref2 = directionToDelta(sourceDirection), deltaRow = _ref2[0], deltaCol = _ref2[1];
+      emptyPos = (_ref3 = [targetRow + deltaRow, targetCol + deltaCol], sourceRow = _ref3[0], sourceCol = _ref3[1], _ref3);
+      grid = [];
+      _ref4 = this.grid;
+      for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+        row = _ref4[_i];
+        grid.push(_.clone(row));
+      }
+      grid[targetRow][targetCol] = grid[sourceRow][sourceCol];
+      grid[sourceRow][sourceCol] = 0;
+      return new Grid(grid, emptyPos);
+    };
     return Grid;
   })();
+  randomMoveList = function(grid, nMoves, moveList) {
+    var last, ldc, ldr, nextGrid, sourceDirection, validMoves, _ref;
+    if (moveList == null) {
+      moveList = [];
+    }
+    if (moveList.length === nMoves) {
+      return moveList;
+    }
+    validMoves = grid.validMoves();
+    if (moveList.length > 0) {
+      last = _.last(moveList);
+      _ref = directionToDelta(last), ldr = _ref[0], ldc = _ref[1];
+      validMoves = _.filter(validMoves, function(m) {
+        var mdc, mdr, _ref2;
+        _ref2 = directionToDelta(m), mdr = _ref2[0], mdc = _ref2[1];
+        return (ldr + mdr !== 0) || (ldc + mdc !== 0);
+      });
+    }
+    sourceDirection = _.shuffle(validMoves)[0];
+    nextGrid = grid.applyMoveFrom(sourceDirection);
+    moveList.push(sourceDirection);
+    return randomMoveList(nextGrid, nMoves, moveList);
+  };
   this.Puzzle = (function() {
     function Puzzle($el) {
       this.grid = new Grid(INIT_GRID, [3, 3]);
       this.gridView = new PuzzleGridView($el, INIT_GRID);
-      this.gridView.queueMoves([ABOVE, LEFT, ABOVE, LEFT]);
-      this.gridView.runQueue(150);
+      this.gridView.queueMoves(randomMoveList(this.grid, 50));
+      this.gridView.runQueue(100);
     }
     return Puzzle;
   })();

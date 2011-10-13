@@ -108,11 +108,57 @@ class Grid
     for row in grid
       @grid.push _.clone(row)
 
+  validMoves: ->
+    [rowNum, colNum] = @emptyPos
+    valid = []
+    valid.push LEFT  if colNum != 0
+    valid.push RIGHT if colNum != 3
+    valid.push ABOVE if rowNum != 0
+    valid.push BELOW if rowNum != 3
+    return valid
+
+  applyMoveFrom: (sourceDirection) ->
+    [targetRow, targetCol] = @emptyPos
+    [deltaRow, deltaCol] = directionToDelta sourceDirection
+    emptyPos = [sourceRow, sourceCol] = [
+      targetRow + deltaRow,
+      targetCol + deltaCol
+    ]
+
+    grid = []
+    for row in @grid
+      grid.push _.clone(row)
+
+    grid[targetRow][targetCol] = grid[sourceRow][sourceCol]
+    grid[sourceRow][sourceCol] = 0
+
+    return new Grid(grid, emptyPos)
+
+randomMoveList = (grid, nMoves, moveList=[]) ->
+  if moveList.length == nMoves
+    return moveList
+
+  validMoves = grid.validMoves()
+
+  if moveList.length > 0
+    # Don't just revert the last move
+    last = _.last(moveList)
+    [ldr, ldc] = directionToDelta last
+    validMoves = _.filter validMoves, (m) ->
+      [mdr, mdc] = directionToDelta m
+      (ldr + mdr != 0) || (ldc + mdc != 0)
+
+  sourceDirection = _.shuffle(validMoves)[0]
+  nextGrid = grid.applyMoveFrom sourceDirection
+  moveList.push sourceDirection
+
+  return randomMoveList(nextGrid, nMoves, moveList)
+
 class @Puzzle
   constructor: ($el) ->
     @grid = new Grid(INIT_GRID, [3, 3])
 
     @gridView = new PuzzleGridView($el, INIT_GRID)
 
-    @gridView.queueMoves [ABOVE, LEFT, ABOVE, LEFT]
-    @gridView.runQueue(150)
+    @gridView.queueMoves randomMoveList(@grid, 50)
+    @gridView.runQueue 100
