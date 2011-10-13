@@ -100,6 +100,13 @@ class PuzzleGridView
 
     cellView.setPosition targetRow, targetCol, duration, cb
 
+window.rectilinearDistance = (num, curRow, curCol) ->
+  ###
+    Calculates the rectilinear distance between
+    where a number is and where it should be
+  ###
+  return 1
+
 class Grid
   constructor: (grid, emptyPos) ->
     @emptyPos = _.clone emptyPos
@@ -133,6 +140,16 @@ class Grid
     grid[sourceRow][sourceCol] = 0
 
     return new Grid(grid, emptyPos)
+
+  lowerSolutionBound: ->
+    ###
+      This calculates a lower bound on the minimum
+      number of steps required to solve the puzzle
+
+      This is the sum of the rectilinear distances
+      from where each number is to where it should
+      be
+    ###
 
 randomMoveList = (grid, nMoves, moveList=[]) ->
   if moveList.length == nMoves
