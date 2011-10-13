@@ -10,11 +10,11 @@
 
 class @Grid
   constructor: (grid=INIT_GRID, emptyPos=[3,3]) ->
-    @emptyPos = _.clone emptyPos
+    @emptyPos = [].concat(emptyPos)
 
     @grid = []
     for row in grid
-      @grid.push _.clone(row)
+      @grid.push([].concat(row))
 
   validMoves: ->
     [rowNum, colNum] = @emptyPos
@@ -35,12 +35,20 @@ class @Grid
 
     grid = []
     for row in @grid
-      grid.push _.clone(row)
+      grid.push([].concat(row))
 
     grid[targetRow][targetCol] = grid[sourceRow][sourceCol]
     grid[sourceRow][sourceCol] = 0
 
-    return new Grid(grid, emptyPos)
+    nextGrid = new Grid(grid, emptyPos)
+    return nextGrid
+
+  applyMoves: (sourceDirections) ->
+    nextGrid = @
+    for dir in sourceDirections
+      nextGrid = nextGrid.applyMoveFrom dir
+
+    return nextGrid
 
   lowerSolutionBound: ->
     ###
@@ -65,3 +73,8 @@ class @Grid
         moveCount += rectilinearDistance number, rowNum, colNum
 
     return moveCount
+
+  log: ->
+    console.log "Empty: #{@emptyPos}"
+    for row in @grid
+      console.log JSON.stringify(row)

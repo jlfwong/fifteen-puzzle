@@ -42,6 +42,52 @@ describe 'rectilinearDistance', ->
     ]
 
 describe 'Grid', ->
+  testGrid = (new Grid([
+    [1  , 2  , 3  , 4  ],
+    [5  , 6  , 7  , 8  ],
+    [9  , 10 , 0  , 11 ],
+    [13 , 14 , 15 , 12 ]
+  ], [2, 2]))
+
+  describe '::applyMoveFrom', ->
+    it 'returns a new, correctly modified grid', ->
+      expect(testGrid.applyMoveFrom(LEFT).grid).toEqual([
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 7  , 8  ],
+        [9  , 0  , 10 , 11 ],
+        [13 , 14 , 15 , 12 ]
+      ])
+
+      expect(testGrid.applyMoveFrom(RIGHT).grid).toEqual([
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 7  , 8  ],
+        [9  , 10 , 11 , 0  ],
+        [13 , 14 , 15 , 12 ]
+      ])
+
+      expect(testGrid.applyMoveFrom(ABOVE).grid).toEqual([
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 0  , 8  ],
+        [9  , 10 , 7  , 11 ],
+        [13 , 14 , 15 , 12 ]
+      ])
+
+      expect(testGrid.applyMoveFrom(BELOW).grid).toEqual([
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 7  , 8  ],
+        [9  , 10 , 15 , 11 ],
+        [13 , 14 , 0  , 12 ]
+      ])
+
+  describe '::applyMoves', ->
+      expect(testGrid.applyMoves([LEFT, LEFT]).grid).toEqual([
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 7  , 8  ],
+        [0  , 9  , 10 , 11 ],
+        [13 , 14 , 15 , 12 ]
+      ])
+
+
   describe '::lowerSolutionBound', ->
     it 'returns 0 for solved grid', ->
       expect((new Grid).lowerSolutionBound()).toEqual 0
@@ -61,8 +107,8 @@ describe 'Grid', ->
 
     it 'returns as expected for a shuffled grid', ->
       expect(new Grid([
-        [1  , 2  , 3  , 4  ]
-        [5  , 6  , 7  , 11 ]
-        [9  , 10 , 8  , 12 ]
+        [1  , 2  , 3  , 4  ],
+        [5  , 6  , 7  , 11 ],
+        [9  , 10 , 8  , 12 ],
         [13 , 14 , 15 , 0  ]
       ]).lowerSolutionBound()).toEqual 4

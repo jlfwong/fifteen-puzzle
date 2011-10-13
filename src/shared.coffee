@@ -1,9 +1,9 @@
 @CELL_SIZE = 100
 
-@ABOVE = 0
-@RIGHT = 1
-@LEFT  = 2
-@BELOW = 3
+@ABOVE = "ABOVE"
+@RIGHT = "RIGHT"
+@LEFT  = "LEFT"
+@BELOW = "BELOW"
 
 @directionToDelta = (direction) ->
   switch direction
@@ -11,6 +11,11 @@
     when RIGHT then [0, 1]
     when BELOW then [1, 0]
     when LEFT  then [0, -1]
+
+@directionsAreOpposites = (a, b) ->
+    [adr, adc] = directionToDelta a
+    [bdr, bdc] = directionToDelta b
+    return (adr + bdr == 0) && (adc + bdc == 0)
 
 @INIT_GRID = [
   [1  , 2  , 3  , 4  ]

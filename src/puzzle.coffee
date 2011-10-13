@@ -80,7 +80,7 @@ class PuzzleGridView
 
     cellView.setPosition targetRow, targetCol, duration, cb
 
-randomMoveList = (grid, nMoves, moveList=[]) ->
+@randomMoveList = (grid, nMoves, moveList=[]) ->
   if moveList.length == nMoves
     return moveList
 
@@ -91,8 +91,7 @@ randomMoveList = (grid, nMoves, moveList=[]) ->
     last = _.last(moveList)
     [ldr, ldc] = directionToDelta last
     validMoves = _.filter validMoves, (m) ->
-      [mdr, mdc] = directionToDelta m
-      (ldr + mdr != 0) || (ldc + mdc != 0)
+      not directionsAreOpposites last, m
 
   sourceDirection = _.shuffle(validMoves)[0]
   nextGrid = grid.applyMoveFrom sourceDirection
