@@ -5,7 +5,7 @@
 @LEFT  = 2
 @BELOW = 3
 
-directionToDelta = (direction) ->
+@directionToDelta = (direction) ->
   switch direction
     when ABOVE then [-1, 0]
     when RIGHT then [0, 1]

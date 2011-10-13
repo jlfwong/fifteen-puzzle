@@ -41,3 +41,28 @@ describe 'rectilinearDistance', ->
       [4, 3, 2, 1]
     ]
 
+describe 'Grid', ->
+  describe '::lowerSolutionBound', ->
+    it 'returns 0 for solved grid', ->
+      expect((new Grid).lowerSolutionBound()).toEqual 0
+
+    it 'returns 1 one move away from solution', ->
+      for sourceDir in [LEFT, ABOVE]
+        grid = (new Grid).applyMoveFrom sourceDir
+        expect(grid.lowerSolutionBound()).toEqual 1
+
+    it 'returns 2 two moves away from solution', ->
+      for [dir1, dir2] in [[LEFT, ABOVE], [ABOVE, LEFT]]
+        grid = (new Grid).
+          applyMoveFrom(dir1).
+          applyMoveFrom(dir2)
+
+        expect(grid.lowerSolutionBound()).toEqual 2
+
+    it 'returns as expected for a shuffled grid', ->
+      expect(new Grid([
+        [1  , 2  , 3  , 4  ]
+        [5  , 6  , 7  , 11 ]
+        [9  , 10 , 8  , 12 ]
+        [13 , 14 , 15 , 0  ]
+      ]).lowerSolutionBound()).toEqual 4

@@ -51,4 +51,17 @@ class @Grid
       from where each number is to where it should
       be
     ###
+    moveCount = 0
 
+    for rowNum of @grid
+      rowNum = parseInt(rowNum, 10)
+      for colNum of @grid[rowNum]
+        colNum = parseInt(colNum, 10)
+
+        number = @grid[rowNum][colNum]
+
+        continue if number == 0
+
+        moveCount += rectilinearDistance number, rowNum, colNum
+
+    return moveCount
