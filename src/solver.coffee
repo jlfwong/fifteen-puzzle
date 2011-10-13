@@ -28,10 +28,20 @@ class @PriorityQueue
 
   frontier.enqueue startState
 
+  its = 0
+
   while not frontier.empty()
+    its += 1
+    if its > 10000
+      # bail
+      console.error('Failed to find solution')
+      return []
+
     curState = frontier.dequeue()
 
     if curState.solved
+      steps = curState.steps
+      console.log("#{steps.length} step solution finished in #{its} iterations")
       return curState.steps
 
     grid = curState.grid

@@ -63,20 +63,35 @@ describe 'solve', ->
       ABOVE, RIGHT, BELOW
     ])
 
-  it 'can solve a random shuffle of 10 moves', ->
-    grid = new Grid
-    moves = randomMoveList grid, 10
-    shuffledGrid = grid.applyMoves moves
-
-    expect(shuffledGrid.lowerSolutionBound()).not.toEqual 0
-
+  expectToReverse = (grid, moveList) ->
+    shuffledGrid = grid.applyMoves moveList
     solution = solve shuffledGrid
-    console.log 'Soln', solution, 'MoveList', moves
-    shuffledGrid.log()
-    console.log '---'
-    grid.log()
-
-    expect(solution.length > 0).toEqual true
-    expect(solution.length <= 10).toEqual true
 
     expect(shuffledGrid.applyMoves(solution).lowerSolutionBound()).toEqual 0
+
+  it 'can solve a random shuffle of 5 moves', ->
+    grid = new Grid
+    for i in [1..5]
+      expectToReverse(grid, randomMoveList(grid, 5))
+
+  it 'can solve a random shuffle of 10 moves', ->
+    grid = new Grid
+    for i in [1..5]
+      expectToReverse(grid, randomMoveList(grid, 10))
+
+  it 'can solve a random shuffle of 15 moves', ->
+    grid = new Grid
+    for i in [1..5]
+      expectToReverse(grid, randomMoveList(grid, 15))
+
+###
+  it 'can solve a 20 step sequence', ->
+    grid = new Grid
+    expectToReverse grid, [
+      ABOVE, ABOVE, LEFT, LEFT,
+      ABOVE, RIGHT, BELOW, LEFT,
+      LEFT, BELOW, BELOW, RIGHT,
+      ABOVE, RIGHT, RIGHT, BELOW,
+      LEFT, LEFT, LEFT, ABOVE
+    ]
+###
