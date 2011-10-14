@@ -1,20 +1,19 @@
-describe 'PriorityQueue', ->
+describe 'SolverStateMinHeap', ->
   it 'works correctly', ->
-    cmp = (a, b) -> b - a
-    q = new PriorityQueue(cmp)
-    q.enqueue 1
-    q.enqueue 7
-    q.enqueue 5
-    q.enqueue 19
+    q = new SolverStateMinHeap
+    q.enqueue val: 1
+    q.enqueue val: 7
+    q.enqueue val: 5
+    q.enqueue val: 19
 
-    expect(q.dequeue()).toEqual 1
-    expect(q.dequeue()).toEqual 5
-    expect(q.dequeue()).toEqual 7
+    expect(q.dequeue()).toEqual val: 1
+    expect(q.dequeue()).toEqual val: 5
+    expect(q.dequeue()).toEqual val: 7
 
-    q.enqueue 12
+    q.enqueue val: 12
 
-    expect(q.dequeue()).toEqual 12
-    expect(q.dequeue()).toEqual 19
+    expect(q.dequeue()).toEqual val: 12
+    expect(q.dequeue()).toEqual val: 19
 
 describe 'solve', ->
   it 'returns [] for an already solved puzzle', ->
@@ -69,30 +68,24 @@ describe 'solve', ->
 
     expect(shuffledGrid.applyMoves(solution).lowerSolutionBound()).toEqual 0
 
-  it 'can solve a random shuffle of 5 moves', ->
+  it 'can solve random shuffles of various sizes', ->
     grid = new Grid
-    for i in [1..5]
-      expectToReverse(grid, randomMoveList(grid, 5))
+    size = 5
+    while size <= 40
+      console.warn "Solving 5 random shuffles of #{size} moves"
+      console.time "Size #{size}"
+      for i in [1..5]
+        expectToReverse(grid, randomMoveList(grid, size))
+      console.timeEnd "Size #{size}"
 
-  it 'can solve a random shuffle of 10 moves', ->
-    grid = new Grid
-    for i in [1..5]
-      expectToReverse(grid, randomMoveList(grid, 10))
+      size += 5
 
-  it 'can solve a random shuffle of 15 moves', ->
-    grid = new Grid
-    for i in [1..5]
-      expectToReverse(grid, randomMoveList(grid, 15))
-
-  it 'can solve a random shuffle of 20 moves', ->
-    grid = new Grid
-    for i in [1..5]
-      expectToReverse(grid, randomMoveList(grid, 20))
-
-  it 'can solve a random shuffle of 25 moves', ->
+  ###
+  it 'can solve a random shuffle of 50 moves', ->
     grid = new Grid
     for i in [1..5]
       expectToReverse(grid, randomMoveList(grid, 25))
+  ###
 
   it 'can solve a 20 step sequence', ->
     grid = new Grid

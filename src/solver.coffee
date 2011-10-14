@@ -1,6 +1,3 @@
-stateCmp = (a, b) ->
-  b.val - a.val
-
 class @SolverState
   constructor: (@grid, steps) ->
     lowerSolutionBound = @grid.lowerSolutionBound()
@@ -8,21 +5,64 @@ class @SolverState
     @solved = (lowerSolutionBound == 0)
     @val = lowerSolutionBound + steps.length
 
-class @PriorityQueue
-  constructor: (cmp) ->
-    @cmp = cmp
+class @SolverStateMinHeap
+  constructor: ->
     @data = []
 
   enqueue: (pt) ->
     @data.push pt
-    @data.sort @cmp
+    @bubbleUp @data.length - 1
 
-  dequeue: (pt) -> @data.pop()
+  dequeue: ->
+    ret = @data[0]
+    end = @data.pop()
+
+    if @data.length > 0
+      @data[0] = end
+      @bubbleDown 0
+
+    return ret
+
+  bubbleUp: (curPos) ->
+    if curPos == 0
+      return
+
+    # ~~ is an optimized Math.floor
+    parentPos = ~~((curPos - 1) / 2)
+
+    cur = @data[curPos]
+    parent = @data[parentPos]
+    if cur.val < parent.val
+      @data[curPos] = parent
+      @data[parentPos] = cur
+
+      @bubbleUp parentPos
+
+  bubbleDown: (curPos) ->
+    leftPos = curPos * 2 + 1
+    rightPos = curPos * 2 + 2
+
+    cur = @data[curPos]
+    left = @data[leftPos]
+    right = @data[rightPos]
+
+    swapPos = null
+
+    if left? and left.val < cur.val
+      swapPos = leftPos
+
+    if right? and right.val < left.val and right.val < cur.val
+      swapPos = rightPos
+
+    if swapPos?
+      @data[curPos] = @data[swapPos]
+      @data[swapPos] = cur
+      @bubbleDown swapPos
 
   empty: -> (@data.length == 0)
 
 @solve = (startGrid) ->
-  frontier = new PriorityQueue(stateCmp)
+  frontier = new SolverStateMinHeap
 
   startState = new SolverState(startGrid, [])
 
@@ -32,7 +72,7 @@ class @PriorityQueue
 
   while not frontier.empty()
     its += 1
-    if its > 10000
+    if its > 100000
       # bail
       console.error('Failed to find solution')
       return []
@@ -41,7 +81,7 @@ class @PriorityQueue
 
     if curState.solved
       steps = curState.steps
-      console.log("#{steps.length} step solution finished in #{its} iterations")
+      console.log "Produced #{steps.length} step solution in #{its} iterations"
       return curState.steps
 
     grid = curState.grid
