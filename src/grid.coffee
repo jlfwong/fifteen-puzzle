@@ -41,6 +41,12 @@ class @Grid
     grid[sourceRow][sourceCol] = 0
 
     nextGrid = new Grid(grid, emptyPos)
+
+    number = grid[targetRow][targetCol]
+    nextGrid._lowerSolutionBound = @lowerSolutionBound() -
+      rectilinearDistance(number, sourceRow, sourceCol) +
+      rectilinearDistance(number, targetRow, targetCol)
+
     return nextGrid
 
   applyMoves: (sourceDirections) ->
@@ -59,20 +65,24 @@ class @Grid
       from where each number is to where it should
       be
     ###
-    moveCount = 0
+    if not @_lowerSolutionBound?
 
-    for rowNum of @grid
-      rowNum = parseInt(rowNum, 10)
-      for colNum of @grid[rowNum]
-        colNum = parseInt(colNum, 10)
+      moveCount = 0
 
-        number = @grid[rowNum][colNum]
+      for rowNum of @grid
+        rowNum = parseInt(rowNum, 10)
+        for colNum of @grid[rowNum]
+          colNum = parseInt(colNum, 10)
 
-        continue if number == 0
+          number = @grid[rowNum][colNum]
 
-        moveCount += rectilinearDistance number, rowNum, colNum
+          continue if number == 0
 
-    return moveCount
+          moveCount += rectilinearDistance number, rowNum, colNum
+
+      @_lowerSolutionBound = moveCount
+
+    return @_lowerSolutionBound
 
   log: ->
     console.log "Empty: #{@emptyPos}"

@@ -71,7 +71,7 @@ describe 'solve', ->
   it 'can solve random shuffles of various sizes', ->
     grid = new Grid
     size = 5
-    while size <= 40
+    while size <= 35
       console.warn "Solving 5 random shuffles of #{size} moves"
       console.time "Size #{size}"
       for i in [1..5]
