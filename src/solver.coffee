@@ -74,7 +74,8 @@ class @SolverStateMinHeap
     its += 1
     if its > 300000
       # bail
-      console.error('Failed to find solution')
+      console.error('Failed to find solution for:')
+      startGrid.log()
       return []
 
     curState = frontier.dequeue()

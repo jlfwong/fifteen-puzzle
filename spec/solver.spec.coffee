@@ -66,12 +66,17 @@ describe 'solve', ->
     shuffledGrid = grid.applyMoves moveList
     solution = solve shuffledGrid
 
-    expect(shuffledGrid.applyMoves(solution).lowerSolutionBound()).toEqual 0
+    solved = shuffledGrid.applyMoves(solution).lowerSolutionBound() == 0
+
+    if not solved
+      console.log "Failed on shuffle sequence: #{moveList}"
+
+    expect(solved).toEqual true
 
   it 'can solve random shuffles of various sizes', ->
     grid = new Grid
     size = 5
-    while size <= 40
+    while size <= 35
       console.warn "Solving 5 random shuffles of #{size} moves"
       console.time "Size #{size}"
       for i in [1..5]
@@ -83,9 +88,23 @@ describe 'solve', ->
   it 'can solve a 20 step sequence', ->
     grid = new Grid
     expectToReverse grid, [
-      ABOVE, ABOVE, LEFT, LEFT,
-      ABOVE, RIGHT, BELOW, LEFT,
-      LEFT, BELOW, BELOW, RIGHT,
-      ABOVE, RIGHT, RIGHT, BELOW,
-      LEFT, LEFT, LEFT, ABOVE
+      ABOVE , ABOVE , LEFT  , LEFT  ,
+      ABOVE , RIGHT , BELOW , LEFT  ,
+      LEFT  , BELOW , BELOW , RIGHT ,
+      ABOVE , RIGHT , RIGHT , BELOW ,
+      LEFT  , LEFT  , LEFT  , ABOVE ,
+    ]
+
+  it 'can solve a 45 step sequence', ->
+    grid = new Grid
+    expectToReverse grid, [
+      LEFT  , LEFT  , ABOVE , RIGHT , BELOW ,
+      RIGHT , ABOVE , ABOVE , LEFT  , ABOVE ,
+      LEFT  , LEFT  , BELOW , BELOW , BELOW ,
+      RIGHT , ABOVE , RIGHT , BELOW , RIGHT ,
+      ABOVE , ABOVE , LEFT  , LEFT  , ABOVE ,
+      RIGHT , RIGHT , BELOW , LEFT  , BELOW ,
+      LEFT  , ABOVE , LEFT  , ABOVE , RIGHT ,
+      BELOW , LEFT  , ABOVE , RIGHT , RIGHT ,
+      BELOW , RIGHT , ABOVE , LEFT  , BELOW ,
     ]
