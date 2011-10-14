@@ -72,7 +72,7 @@ class @SolverStateMinHeap
 
   while not frontier.empty()
     its += 1
-    if its > 100000
+    if its > 300000
       # bail
       console.error('Failed to find solution')
       return []

@@ -71,7 +71,7 @@ describe 'solve', ->
   it 'can solve random shuffles of various sizes', ->
     grid = new Grid
     size = 5
-    while size <= 35
+    while size <= 40
       console.warn "Solving 5 random shuffles of #{size} moves"
       console.time "Size #{size}"
       for i in [1..5]
@@ -79,13 +79,6 @@ describe 'solve', ->
       console.timeEnd "Size #{size}"
 
       size += 5
-
-  ###
-  it 'can solve a random shuffle of 50 moves', ->
-    grid = new Grid
-    for i in [1..5]
-      expectToReverse(grid, randomMoveList(grid, 25))
-  ###
 
   it 'can solve a 20 step sequence', ->
     grid = new Grid
