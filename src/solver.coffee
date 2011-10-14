@@ -87,7 +87,7 @@ class @SolverStateMinHeap
     grid = curState.grid
     steps = curState.steps
 
-    candidates = grid.validMoves()
+    candidates = _.shuffle(grid.validMoves())
 
     lastStep = _.last(steps)
     if lastStep?
