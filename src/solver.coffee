@@ -47,7 +47,14 @@ class @PriorityQueue
     grid = curState.grid
     steps = curState.steps
 
-    for sourceDirection in grid.validMoves()
+    candidates = grid.validMoves()
+
+    lastStep = _.last(steps)
+    if lastStep?
+      candidates = _(candidates).filter (x) ->
+        not directionsAreOpposites x, lastStep
+
+    for sourceDirection in candidates
       nextGrid = grid.applyMoveFrom sourceDirection
       nextSteps = steps.concat [sourceDirection]
       nextState = new SolverState(nextGrid, nextSteps)

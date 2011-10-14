@@ -84,7 +84,16 @@ describe 'solve', ->
     for i in [1..5]
       expectToReverse(grid, randomMoveList(grid, 15))
 
-###
+  it 'can solve a random shuffle of 20 moves', ->
+    grid = new Grid
+    for i in [1..5]
+      expectToReverse(grid, randomMoveList(grid, 20))
+
+  it 'can solve a random shuffle of 25 moves', ->
+    grid = new Grid
+    for i in [1..5]
+      expectToReverse(grid, randomMoveList(grid, 25))
+
   it 'can solve a 20 step sequence', ->
     grid = new Grid
     expectToReverse grid, [
@@ -94,4 +103,3 @@ describe 'solve', ->
       ABOVE, RIGHT, RIGHT, BELOW,
       LEFT, LEFT, LEFT, ABOVE
     ]
-###
