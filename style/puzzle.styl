@@ -18,8 +18,7 @@ background-image-linear-gradient(color1, color2)
 
 fancy(fg, bg, height, width, button=false)
   color fg
-
-  border-color darken(bg, 20%)
+  border 1px solid darken(bg, 40%)
   border-radius "5px"
 
   background-image-linear-gradient(lighten(bg, 10%), darken(bg, 10%))
@@ -45,14 +44,14 @@ fancy(fg, bg, height, width, button=false)
   border-radius    '5px'
   position         relative
   width            dimension
-  height           dimension + control-bar-height
+  height           dimension + control-bar-height + spacing
   background-color #222
   font-family      sans-serif
 
   vendor('user-select', none)
 
   .control-bar
-    margin-top dimension
+    margin-top dimension + spacing
     padding 0 spacing
 
     inner-control-height = control-bar-height - spacing
@@ -61,7 +60,7 @@ fancy(fg, bg, height, width, button=false)
     .shuffle-button
       float left
       font-weight bold
-      fancy(fg: #556, bg: #c9c9c0, width: 0.3px * inner-control-width, height: inner-control-height, button: true)
+      fancy(fg: #556, bg: #c9c9c0, width: 0.3px * inner-control-width - 2px, height: inner-control-height - 2px, button: true)
 
     .title-text
       fg-color = #999
@@ -78,7 +77,7 @@ fancy(fg, bg, height, width, button=false)
     .solve-button
       float left
       font-weight bold
-      fancy(fg: #D80, bg: #722, width: 0.3px * inner-control-width, height: inner-control-height, button: true)
+      fancy(fg: #D80, bg: #722, width: 0.3px * inner-control-width - 2px, height: inner-control-height - 2px, button: true)
 
   .cell
     border-width = 1px
