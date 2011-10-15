@@ -3,7 +3,7 @@ class PuzzleCellView
   cellSize: 100
 
   constructor: ({@number, @controller}) ->
-    @node = $ "<div/>",
+    @node = $ '<div/>',
       class: 'cell'
       text: @number
 
@@ -23,6 +23,30 @@ class PuzzleCellView
       top  : "#{@spacing + @rowNum * (@spacing + @cellSize)}px"
       left : "#{@spacing + @colNum * (@spacing + @cellSize)}px"
     }, duration, cb
+
+class ControlBarView
+  constructor: ({@controller}) ->
+    @node = $ '<div/>',
+      class: 'control-bar'
+
+    shuffleBtn = $ '<div/>',
+      text:  'shuffle'
+      class: 'shuffle-button'
+      click: => @controller.handleShuffleClicked()
+
+    titleText = $ '<div/>',
+      text:  'Fifteen'
+      class: 'title-text'
+
+    solveBtn = $ '<div/>',
+      text: 'solve'
+      class: 'solve-button'
+      click: => @controller.handleSolveClicked()
+
+    @node.append shuffleBtn
+    @node.append titleText
+    @node.append solveBtn
+
 
 class PuzzleGridView
   constructor: ({@controller, @node, grid}) ->
@@ -53,6 +77,12 @@ class PuzzleGridView
           @node.append(cell.node)
 
         @cellViews[rowNum].push(cell)
+
+    @controlBarView = new ControlBarView {
+      controller: @controller
+    }
+
+    @node.append(@controlBarView.node)
 
   queueMoves: (moves) ->
     @moveQueue = @moveQueue.concat(moves)
@@ -114,7 +144,7 @@ class @Puzzle
       controller : this
     }
 
-  shuffle: (nMoves=10) ->
+  shuffle: (nMoves=25) ->
     @applyMoves randomMoveList(@grid, nMoves)
 
   applyMoves: (moves) ->
@@ -122,6 +152,16 @@ class @Puzzle
     @gridView.queueMoves moves
     @gridView.runQueue @moveDuration, @movePause, =>
       @moving = false
+
+  handleShuffleClicked: ->
+    if not @gridView.moving
+      @shuffle()
+
+  handleSolveClicked: ->
+    if not @gridView.moving
+      solution = solve(@grid)
+      console.log solution
+      @applyMoves solution
 
   handleCellClicked: (rowNum, colNum) ->
     if not @gridView.moving

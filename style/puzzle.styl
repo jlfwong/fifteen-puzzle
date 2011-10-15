@@ -16,46 +16,79 @@ background-image-linear-gradient(color1, color2)
   background-image -webkit-linear-gradient(top, color1, color2)
   background-image -ms-linear-gradient(top, color1, color2)
 
+fancy(fg, bg, height, width, button=false)
+  color fg
+
+  border-color darken(bg, 20%)
+  border-radius "5px"
+
+  background-image-linear-gradient(lighten(bg, 10%), darken(bg, 10%))
+  box-shadow("inset 3px 3px 3px 0px rgba(255, 255, 255, 0.15), inset -3px -3px 3px rgba(0, 0, 0, 0.25)")
+  text-shadow lighten(bg, 25%) 1px 1px 2px, darken(bg, 25%) -1px -1px 2px
+
+  width width
+  height height
+  line-height height
+  text-align center
+
+  if button
+    &:hover
+      color lighten(fg, 50%)
 
 .puzzle
   cell-size = 100px
-  border-radius = 5px
   spacing = 5px
   dimension = spacing + (4px * (cell-size + spacing))
+  control-bar-height = 45px
 
   border           1px solid black
+  border-radius    '5px'
   position         relative
   width            dimension
-  height           dimension
-  border-radius    border-radius
+  height           dimension + control-bar-height
   background-color #222
   font-family      sans-serif
+
+  vendor('user-select', none)
+
+  .control-bar
+    margin-top dimension
+    padding 0 spacing
+
+    inner-control-height = control-bar-height - spacing
+    inner-control-width = dimension - 2 * spacing
+
+    .shuffle-button
+      float left
+      font-weight bold
+      fancy(fg: #556, bg: #c9c9c0, width: 0.3px * inner-control-width, height: inner-control-height, button: true)
+
+    .title-text
+      fg-color = #999
+
+      text-align center
+      float left
+      width 0.4px * inner-control-width
+      line-height inner-controller-height
+      font-size 30px
+      color fg-color
+      font-family Satisfy, serif
+      text-shadow darken(fg-color, 25%) 0 -1px 1px, lighten(fg-color, 25%) 0 1px 1px
+
+    .solve-button
+      float left
+      font-weight bold
+      fancy(fg: #D80, bg: #722, width: 0.3px * inner-control-width, height: inner-control-height, button: true)
 
   .cell
     border-width = 1px
     inner-width = cell-size - (2 * border-width)
 
-    vendor('user-select', none)
     position       absolute
-    text-align     center
     font-size      35px
-    width          inner-width
-    height         inner-width
-    line-height    inner-width
-    border-width   border-width
-    border-style   solid
-    border-radius  border-radius
 
     &.dark
-      color          #DB0
-      border-color   #522
-      text-shadow    #C55 0 2px 2px, #522 0 -2px 2px
-      background-image-linear-gradient(#933, #622)
-      box-shadow("inset 3px 3px 3px 0px rgba(255, 255, 255, 0.15), inset -3px -3px 3px 0px rgba(0, 0, 30, 0.25)")
+      fancy(fg: #D80, bg: #722, width: inner-width, height: inner-width)
 
     &.light
-      color         #557
-      border-color  #888
-      text-shadow   #EEE 0 2px 2px, #AAA 0 -2px 2px
-      background-image-linear-gradient(#d0d0c9, #b0b0a9)
-      box-shadow("inset 3px 3px 3px 0px rgba(255, 255, 255, 0.30), inset -3px -3px 3px 0px rgba(0, 0, 30, 0.20)")
+      fancy(fg: #556, bg: #c9c9c0, width: inner-width, height: inner-width)
