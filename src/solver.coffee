@@ -39,11 +39,11 @@ class @SolverStateMinHeap
       @bubbleUp parentPos
 
   bubbleDown: (curPos) ->
-    leftPos = curPos * 2 + 1
+    leftPos  = curPos * 2 + 1
     rightPos = curPos * 2 + 2
 
-    cur = @data[curPos]
-    left = @data[leftPos]
+    cur   = @data[curPos]
+    left  = @data[leftPos]
     right = @data[rightPos]
 
     swapPos = null
@@ -61,7 +61,10 @@ class @SolverStateMinHeap
 
   empty: -> (@data.length == 0)
 
-@solve = (startGrid) ->
+@solve = (startGrid, {complete, error}) ->
+  complete ?= $.noop
+  error ?= $.noop
+
   frontier = new SolverStateMinHeap
 
   startState = new SolverState(startGrid, [])
@@ -72,18 +75,22 @@ class @SolverStateMinHeap
 
   while not frontier.empty()
     its += 1
-    if its > 300000
-      # bail
-      console.error('Failed to find solution for:')
-      startGrid.log()
-      return []
+    if its > 100
+      error {
+        msg: 'No solution found'
+      }
+      return
 
     curState = frontier.dequeue()
 
     if curState.solved
       steps = curState.steps
-      console.log "Produced #{steps.length} step solution in #{its} iterations"
-      return curState.steps
+
+      complete {
+        steps      : curState.steps
+        iterations : its
+      }
+      return
 
     grid = curState.grid
     steps = curState.steps
@@ -96,7 +103,7 @@ class @SolverStateMinHeap
         not directionsAreOpposites x, lastStep
 
     for sourceDirection in candidates
-      nextGrid = grid.applyMoveFrom sourceDirection
+      nextGrid  = grid.applyMoveFrom sourceDirection
       nextSteps = steps.concat [sourceDirection]
       nextState = new SolverState(nextGrid, nextSteps)
       frontier.enqueue nextState

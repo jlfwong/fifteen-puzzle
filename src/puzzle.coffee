@@ -147,8 +147,8 @@ class PuzzleView
   return randomMoveList(nextGrid, nMoves, moveList)
 
 class @Puzzle
-  moveDuration: 400
-  movePause: 100
+  moveDuration: 100
+  movePause: 20
 
   constructor: (@container) ->
     @grid = new Grid(INIT_GRID, [3, 3])
@@ -175,9 +175,14 @@ class @Puzzle
   handleSolveClicked: ->
     if not @view.moving and not @grid.isSolved()
       @view.hideControls =>
-        solution = solve(@grid)
-        @applyMoves solution, =>
-          @view.showControls()
+        solve @grid, {
+          complete: (solution) =>
+            @applyMoves solution, =>
+              @view.showControls()
+
+          error: ({msg}) =>
+            console.log msg
+        }
 
   handleCellClicked: (rowNum, colNum) ->
     if not @view.moving
