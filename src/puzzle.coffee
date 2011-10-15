@@ -29,6 +29,8 @@ class ControlBarView
     @node = $ '<div/>',
       class: 'control-bar'
 
+    @controls = $ '<div/>'
+
     shuffleBtn = $ '<div/>',
       text:  'shuffle'
       class: 'shuffle-button'
@@ -43,14 +45,17 @@ class ControlBarView
       class: 'solve-button'
       click: => @controller.handleSolveClicked()
 
-    @node.append shuffleBtn
-    @node.append titleText
-    @node.append solveBtn
+    @controls.append shuffleBtn
+    @controls.append titleText
+    @controls.append solveBtn
 
+    @node.append @controls
 
-class PuzzleGridView
-  constructor: ({@controller, @node, grid}) ->
-    @node.addClass 'puzzle'
+class PuzzleView
+  constructor: ({@controller, @container, grid}) ->
+    @container.addClass('puzzle-container')
+
+    @node = $('<div/>').addClass('puzzle').appendTo @container
 
     @moving = false
     @moveQueue = []
@@ -87,17 +92,20 @@ class PuzzleGridView
   queueMoves: (moves) ->
     @moveQueue = @moveQueue.concat(moves)
 
-  runQueue: (duration, pause) ->
-    return if @moveQueue.length == 0
+  runQueue: (duration, pause, cb=$.noop) ->
+    if @moveQueue.length == 0
+      cb()
+      return
 
     @moving = true
     @moveFrom @moveQueue.shift(), duration, =>
       if @moveQueue.length > 0
         setTimeout =>
-          @runQueue duration, pause
+          @runQueue duration, pause, cb
         , pause
       else
         @moving = false
+        cb()
 
   moveFrom: (sourceDirection, duration, cb) ->
     [targetRow, targetCol] = @emptyPos
@@ -112,6 +120,12 @@ class PuzzleGridView
     @cellViews[sourceRow][sourceCol] = null
 
     cellView.setPosition targetRow, targetCol, duration, cb
+
+  hideControls: (cb) ->
+    $(@node).animate height: "-=50px", cb
+
+  showControls: (cb) ->
+    $(@node).animate height: "+=50px", cb
 
 @randomMoveList = (grid, nMoves, moveList=[]) ->
   if moveList.length == nMoves
@@ -136,35 +150,37 @@ class @Puzzle
   moveDuration: 400
   movePause: 100
 
-  constructor: (@node) ->
+  constructor: (@container) ->
     @grid = new Grid(INIT_GRID, [3, 3])
-    @gridView = new PuzzleGridView {
-      node       : @node
+    @view = new PuzzleView {
+      container  : @container
       grid       : INIT_GRID
       controller : this
     }
 
-  shuffle: (nMoves=25) ->
-    @applyMoves randomMoveList(@grid, nMoves)
+  shuffle: (nMoves, cb) ->
+    @applyMoves randomMoveList(@grid, nMoves), cb
 
-  applyMoves: (moves) ->
+  applyMoves: (moves, cb) ->
     @grid = @grid.applyMoves moves
-    @gridView.queueMoves moves
-    @gridView.runQueue @moveDuration, @movePause, =>
-      @moving = false
+    @view.queueMoves moves
+    @view.runQueue @moveDuration, @movePause, cb
 
   handleShuffleClicked: ->
-    if not @gridView.moving
-      @shuffle()
+    if not @view.moving
+      @view.hideControls =>
+        @shuffle 25, =>
+          @view.showControls()
 
   handleSolveClicked: ->
-    if not @gridView.moving
-      solution = solve(@grid)
-      console.log solution
-      @applyMoves solution
+    if not @view.moving and not @grid.isSolved()
+      @view.hideControls =>
+        solution = solve(@grid)
+        @applyMoves solution, =>
+          @view.showControls()
 
   handleCellClicked: (rowNum, colNum) ->
-    if not @gridView.moving
+    if not @view.moving
       move = @grid.positionToMove rowNum, colNum
       if move?
         @applyMoves [move]

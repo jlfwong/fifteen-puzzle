@@ -99,6 +99,8 @@ class @Grid
 
     return @_lowerSolutionBound
 
+  isSolved: -> @lowerSolutionBound() == 0
+
   log: ->
     console.log "Empty: #{@emptyPos}"
     for row in @grid

@@ -2,7 +2,7 @@ class @SolverState
   constructor: (@grid, steps) ->
     lowerSolutionBound = @grid.lowerSolutionBound()
     @steps = [].concat(steps)
-    @solved = (lowerSolutionBound == 0)
+    @solved = @grid.isSolved()
     @val = lowerSolutionBound + steps.length
 
 class @SolverStateMinHeap

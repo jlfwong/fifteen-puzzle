@@ -34,13 +34,24 @@ fancy(fg, bg, height, width, button=false)
     &:hover
       color lighten(fg, 50%)
 
-.puzzle
-  cell-size = 100px
-  spacing = 5px
-  dimension = spacing + (4px * (cell-size + spacing))
-  control-bar-height = 45px
+    &:active
+      background-image-linear-gradient(darken(bg, 10%), darken(bg, 30%))
+      text-shadow lighten(bg, 5%) 1px 1px 2px, darken(bg, 45%) -1px -1px 2px
+      box-shadow("inset -3px -3px 3px 0px rgba(255, 255, 255, 0.15), inset 3px 3px 3px rgba(0, 0, 0, 0.25)")
 
-  border           1px solid black
+
+cell-size = 100px
+spacing = 5px
+dimension = spacing + (4px * (cell-size + spacing))
+control-bar-height = 45px
+
+.puzzle-container
+  width dimension
+  height dimension + control-bar-height + spacing
+  overflow hidden
+
+.puzzle
+  overflow         hidden
   border-radius    '5px'
   position         relative
   width            dimension
@@ -57,16 +68,19 @@ fancy(fg, bg, height, width, button=false)
     inner-control-height = control-bar-height - spacing
     inner-control-width = dimension - 2 * spacing
 
-    .shuffle-button
+    .shuffle-button, .solve-button
       float left
       font-weight bold
+      font-size 15px
+
+    .shuffle-button
       fancy(fg: #556, bg: #c9c9c0, width: 0.3px * inner-control-width - 2px, height: inner-control-height - 2px, button: true)
 
     .title-text
       fg-color = #999
 
-      text-align center
       float left
+      text-align center
       width 0.4px * inner-control-width
       line-height inner-controller-height
       font-size 30px
@@ -75,8 +89,6 @@ fancy(fg, bg, height, width, button=false)
       text-shadow darken(fg-color, 25%) 0 -1px 1px, lighten(fg-color, 25%) 0 1px 1px
 
     .solve-button
-      float left
-      font-weight bold
       fancy(fg: #D80, bg: #722, width: 0.3px * inner-control-width - 2px, height: inner-control-height - 2px, button: true)
 
   .cell
