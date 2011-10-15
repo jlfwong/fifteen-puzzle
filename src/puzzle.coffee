@@ -1,40 +1,29 @@
 class PuzzleCellView
+  spacing: 5
+  cellSize: 100
+
   constructor: (num) ->
     @node = $ "<div/>",
+      class: 'cell'
       text: num
-      css:
-        width      : "#{CELL_SIZE - 2}px"
-        height     : "#{CELL_SIZE - 2}px"
-        textAlign  : "center"
-        lineHeight : "#{CELL_SIZE}px"
-        fontSize   : "30px"
-        border     : "1px solid black"
-        position   : "absolute"
 
     origRowNum = parseInt((num - 1) / 4, 10)
     origColNum = parseInt((num - 1) % 4, 10)
 
     if (origRowNum + origColNum) % 2 == 0
-      @node.css
-        backgroundColor: 'black'
-        color: 'white'
+      @node.addClass 'dark'
     else
-      @node.css
-        backgroundColor: 'white'
-        color: 'black'
+      @node.addClass 'light'
 
   setPosition: (rowNum, colNum, duration=0, cb=$.noop) ->
     @node.animate {
-      top  : "#{rowNum * CELL_SIZE}px"
-      left : "#{colNum * CELL_SIZE}px"
+      top  : "#{@spacing + rowNum * (@spacing + @cellSize)}px"
+      left : "#{@spacing + colNum * (@spacing + @cellSize)}px"
     }, duration, cb
 
 class PuzzleGridView
   constructor: ($el, grid) ->
-    $el.css
-      position : "relative"
-      width    : "#{4 * CELL_SIZE}px"
-      height   : "#{4 * CELL_SIZE}px"
+    $el.addClass 'puzzle'
 
     @moveQueue = []
     @cellViews = []
@@ -102,8 +91,8 @@ class PuzzleGridView
 class @Puzzle
   constructor: ($el) ->
     @grid = new Grid(INIT_GRID, [3, 3])
-
     @gridView = new PuzzleGridView($el, INIT_GRID)
 
+  shuffle: ->
     @gridView.queueMoves randomMoveList(@grid, 50)
     @gridView.runQueue 100

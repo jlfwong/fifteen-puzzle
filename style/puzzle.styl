@@ -1,0 +1,60 @@
+vendor(prop, args)
+  {prop} args
+  for prefix in webkit moz o ms
+    -{prefix}-{prop} args
+
+box-shadow()
+  vendor('box-shadow', arguments)
+
+border-radius()
+  vendor('border-radius', arguments)
+
+background-image-linear-gradient(color1, color2)
+  background-image vendor('linear-gradient', top, color1, color2)
+  background-image -o-linear-gradient(top, color1, color2)
+  background-image -moz-linear-gradient(top, color1, color2)
+  background-image -webkit-linear-gradient(top, color1, color2)
+  background-image -ms-linear-gradient(top, color1, color2)
+
+
+.puzzle
+  cell-size = 100px
+  border-radius = 5px
+  spacing = 5px
+  dimension = spacing + (4px * (cell-size + spacing))
+
+  border           1px solid black
+  position         relative
+  width            dimension
+  height           dimension
+  border-radius    border-radius
+  background-color #999
+  font-family      sans-serif
+
+  .cell
+    border-width = 1px
+    inner-width = cell-size - (2 * border-width)
+
+    position       absolute
+    text-align     center
+    font-size      35px
+    width          inner-width
+    height         inner-width
+    line-height    inner-width
+    border-width   border-width
+    border-style   solid
+    border-radius  border-radius
+
+    &.dark
+      color          #DB0
+      border-color   #522
+      text-shadow    #C55 0 2px 2px, #522 0 -2px 2px
+      background-image-linear-gradient(#933, #622)
+      box-shadow(inset 0px 0px 5px rgba(0, 0, 0, 0.40))
+
+    &.light
+      color         #864
+      border-color  #888
+      text-shadow   #EEE 0 2px 2px, #AAA 0 -2px 2px
+      background-image-linear-gradient(#f0f0e9, #c0c0b9)
+      box-shadow(inset 0px 0px 5px rgba(0, 0, 0, 0.30))

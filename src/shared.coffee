@@ -1,5 +1,3 @@
-@CELL_SIZE = 100
-
 @ABOVE = "ABOVE"
 @RIGHT = "RIGHT"
 @LEFT  = "LEFT"
