@@ -50,10 +50,12 @@ class PuzzleGridView
   queueMoves: (moves) ->
     @moveQueue = @moveQueue.concat(moves)
 
-  runQueue: (duration) ->
+  runQueue: (duration, pause) ->
     if @moveQueue.length != 0
       @moveFrom @moveQueue.shift(), duration, =>
-        @runQueue(duration)
+        setTimeout =>
+          @runQueue(duration, pause)
+        , pause
 
   moveFrom: (sourceDirection, duration, cb) ->
     [targetRow, targetCol] = @emptyPos
@@ -94,5 +96,5 @@ class @Puzzle
     @gridView = new PuzzleGridView($el, INIT_GRID)
 
   shuffle: ->
-    @gridView.queueMoves randomMoveList(@grid, 50)
-    @gridView.runQueue 100
+    @gridView.queueMoves randomMoveList(@grid, 25)
+    @gridView.runQueue 150, 75
