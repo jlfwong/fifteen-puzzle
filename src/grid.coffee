@@ -25,6 +25,21 @@ class @Grid
     valid.push BELOW if rowNum != 3
     return valid
 
+  positionToMove: (rowNum, colNum) ->
+    [emptyRow, emptyCol] = @emptyPos
+    if rowNum == emptyRow
+      if colNum == emptyCol - 1
+        return LEFT
+      if colNum == emptyCol + 1
+        return RIGHT
+    if colNum == emptyCol
+      if rowNum == emptyRow - 1
+        return ABOVE
+      if rowNum == emptyRow + 1
+        return BELOW
+
+    return null
+
   applyMoveFrom: (sourceDirection) ->
     [targetRow, targetCol] = @emptyPos
     [deltaRow, deltaCol] = directionToDelta sourceDirection

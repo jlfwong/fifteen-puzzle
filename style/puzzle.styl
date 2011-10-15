@@ -28,13 +28,14 @@ background-image-linear-gradient(color1, color2)
   width            dimension
   height           dimension
   border-radius    border-radius
-  background-color #999
+  background-color #222
   font-family      sans-serif
 
   .cell
     border-width = 1px
     inner-width = cell-size - (2 * border-width)
 
+    vendor('user-select', none)
     position       absolute
     text-align     center
     font-size      35px
