@@ -7,7 +7,7 @@ class PuzzleCellView
       class: 'cell'
       text: @number
 
-    @node.click =>
+    @node.mousedown =>
       @controller.handleCellClicked @rowNum, @colNum
 
     origRowNum = parseInt((@number - 1) / 4, 10)
@@ -59,6 +59,8 @@ class OverlayView
     @overlay = $ '<div/>',
       class: 'overlay'
 
+    @glowing = false
+
     @node.append @overlay
     @node.hide()
 
@@ -68,10 +70,27 @@ class OverlayView
   show: (msg, cb) ->
     if msg?
       @setMessage msg
-    @node.fadeIn cb
+
+    @node.fadeIn =>
+      cb() if cb
+      @glowing = true
+      @glowOut()
 
   hide: (cb) ->
+    @glowing = false
     @node.fadeOut cb
+
+  glowOut: ->
+    return if not @glowing
+    @overlay.animate {
+      opacity: 0.6
+    }, 1000, => @glowIn()
+
+  glowIn: ->
+    return if not @glowing
+    @overlay.animate {
+      opacity: 0.8
+    }, 1000, => @glowOut()
 
 class PuzzleView
   constructor: ({@controller, @container, grid}) ->
@@ -224,19 +243,18 @@ class @Puzzle
     if @view.isInteractive() and not @grid.isSolved()
       @view.hideControls =>
 
-        @view.showOverlay 'solving'
+        @view.showOverlay 'solving', =>
+          solve @grid, {
+            complete: ({steps}) =>
+              @view.hideOverlay =>
+                @applyMoves steps, =>
+                  @view.showControls()
 
-        solve @grid, {
-          complete: ({steps}) =>
-            @view.hideOverlay =>
-              @applyMoves steps, =>
-                @view.showControls()
+            error: ({msg}) =>
+              @view.hideOverlay()
 
-          error: ({msg}) =>
-            @view.hideOverlay()
-
-            @view.showControls()
-        }
+              @view.showControls()
+          }
 
   handleCellClicked: (rowNum, colNum) ->
     if @view.isInteractive()

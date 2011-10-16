@@ -74,7 +74,7 @@ class @SolverStateMinHeap
 
   while not frontier.empty()
     its += 1
-    if its > 10000
+    if its > 1000
       window.setTimeout ->
         solve startGrid, {complete, error, frontier}
       , 10
