@@ -65,13 +65,13 @@ class OverlayView
   setMessage: (msg) ->
     @overlay.text msg
 
-  show: (msg) ->
+  show: (msg, cb) ->
     if msg?
       @setMessage msg
-    @node.fadeIn()
+    @node.fadeIn cb
 
-  hide: ->
-    @node.fadeOut()
+  hide: (cb) ->
+    @node.fadeOut cb
 
 class PuzzleView
   constructor: ({@controller, @container, grid}) ->
@@ -160,14 +160,14 @@ class PuzzleView
     @controlsShown = true
     $(@node).animate height: "+=50px", cb
 
-  showOverlay: (msg) ->
-    @overlayView.show msg
+  showOverlay: (msg, cb) ->
+    @overlayView.show msg, cb
 
   setOverlayMessage: (msg) ->
     @overlayView.setMessage msg
 
-  hideOverlay: ->
-    @overlayView.hide()
+  hideOverlay: (cb) ->
+    @overlayView.hide cb
 
   isInteractive: -> @controlsShown and not @moving
 
@@ -227,11 +227,10 @@ class @Puzzle
         @view.showOverlay 'solving'
 
         solve @grid, {
-          complete: (solution) =>
-            @view.hideOverlay()
-
-            @applyMoves solution, =>
-              @view.showControls()
+          complete: ({steps}) =>
+            @view.hideOverlay =>
+              @applyMoves steps, =>
+                @view.showControls()
 
           error: ({msg}) =>
             @view.hideOverlay()
