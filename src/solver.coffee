@@ -6,12 +6,17 @@ class @SolverState
     @val = lowerSolutionBound + steps.length
 
 class @SolverStateMinHeap
+  maxSize: 100000
+
   constructor: ->
     @data = []
 
   enqueue: (pt) ->
     @data.push pt
     @bubbleUp @data.length - 1
+
+    if @data.length == @maxSize
+      @data.pop()
 
   dequeue: ->
     ret = @data[0]

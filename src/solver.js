@@ -11,12 +11,16 @@
     return SolverState;
   })();
   this.SolverStateMinHeap = (function() {
+    SolverStateMinHeap.prototype.maxSize = 100000;
     function SolverStateMinHeap() {
       this.data = [];
     }
     SolverStateMinHeap.prototype.enqueue = function(pt) {
       this.data.push(pt);
-      return this.bubbleUp(this.data.length - 1);
+      this.bubbleUp(this.data.length - 1);
+      if (this.data.length === this.maxSize) {
+        return this.data.pop();
+      }
     };
     SolverStateMinHeap.prototype.dequeue = function() {
       var end, ret;
