@@ -51,13 +51,38 @@ class ControlBarView
 
     @node.append @controls
 
+class OverlayView
+  constructor: ({@controller}) ->
+    @node = $ '<div/>',
+      class: 'overlay-container'
+
+    @overlay = $ '<div/>',
+      class: 'overlay'
+
+    @node.append @overlay
+    @node.hide()
+
+  setMessage: (msg) ->
+    @overlay.text msg
+
+  show: (msg) ->
+    if msg?
+      @setMessage msg
+    @node.fadeIn()
+
+  hide: ->
+    @node.fadeOut()
+
 class PuzzleView
   constructor: ({@controller, @container, grid}) ->
     @container.addClass('puzzle-container')
 
     @node = $('<div/>').addClass('puzzle').appendTo @container
 
+    @controlsShown = true
+
     @moving = false
+
     @moveQueue = []
     @cellViews = []
 
@@ -88,6 +113,12 @@ class PuzzleView
     }
 
     @node.append(@controlBarView.node)
+
+    @overlayView = new OverlayView {
+      controller: @controller
+    }
+
+    @node.append(@overlayView.node)
 
   queueMoves: (moves) ->
     @moveQueue = @moveQueue.concat(moves)
@@ -122,10 +153,23 @@ class PuzzleView
     cellView.setPosition targetRow, targetCol, duration, cb
 
   hideControls: (cb) ->
+    @controlsShown = false
     $(@node).animate height: "-=50px", cb
 
   showControls: (cb) ->
+    @controlsShown = true
     $(@node).animate height: "+=50px", cb
+
+  showOverlay: (msg) ->
+    @overlayView.show msg
+
+  setOverlayMessage: (msg) ->
+    @overlayView.setMessage msg
+
+  hideOverlay: ->
+    @overlayView.hide()
+
+  isInteractive: -> @controlsShown and not @moving
 
 @randomMoveList = (grid, nMoves, moveList=[]) ->
   if moveList.length == nMoves
@@ -167,25 +211,36 @@ class @Puzzle
     @view.runQueue @moveDuration, @movePause, cb
 
   handleShuffleClicked: ->
-    if not @view.moving
+    if @view.isInteractive()
+      @view.showOverlay 'shuffling'
+
       @view.hideControls =>
         @shuffle 25, =>
+          @view.hideOverlay()
+
           @view.showControls()
 
   handleSolveClicked: ->
-    if not @view.moving and not @grid.isSolved()
+    if @view.isInteractive() and not @grid.isSolved()
       @view.hideControls =>
+
+        @view.showOverlay 'solving'
+
         solve @grid, {
           complete: (solution) =>
+            @view.hideOverlay()
+
             @applyMoves solution, =>
               @view.showControls()
 
           error: ({msg}) =>
-            console.log msg
+            @view.hideOverlay()
+
+            @view.showControls()
         }
 
   handleCellClicked: (rowNum, colNum) ->
-    if not @view.moving
+    if @view.isInteractive()
       move = @grid.positionToMove rowNum, colNum
       if move?
         @applyMoves [move]

@@ -59,6 +59,32 @@ control-bar-height = 45px
   background-color #222
   font-family      sans-serif
 
+  .overlay-container
+    width    dimension
+    height   dimension
+    position absolute
+    top      0
+    left     0
+    z-index  10
+    background-color rgba(32, 32, 32, 0.25)
+
+    .overlay
+      overlay-height = 100px
+      overlay-width  = 100px
+
+      width            overlay-width
+      height           overlay-height
+      position         absolute
+      top              (dimension/2) - (overlay-height/2)
+      left             (dimension/2) - (overlay-width/2)
+      z-index          20
+      background-color rgb(32, 32, 32)
+      opacity          0.8
+      border-radius    '10px'
+      line-height      overlay-height
+      color            #ccc
+      text-align       center
+
   vendor('user-select', none)
 
   .control-bar
