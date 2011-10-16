@@ -31,14 +31,15 @@ jasmine.TrivialReporter.prototype.createDom = function(type, attrs, childrenVarA
 jasmine.TrivialReporter.prototype.reportRunnerStarting = function(runner) {
   var showPassed, showSkipped;
 
-  this.outerDiv = this.createDom('div', { className: 'jasmine_reporter' },
+  this.outerDiv = this.createDom('div', { className: 'jasmine_reporter show-passed' },
       this.createDom('div', { className: 'banner' },
         this.createDom('div', { className: 'logo' },
             this.createDom('span', { className: 'title' }, "Jasmine"),
             this.createDom('span', { className: 'version' }, runner.env.versionString())),
+
         this.createDom('div', { className: 'options' },
             "Show ",
-            showPassed = this.createDom('input', { id: "__jasmine_TrivialReporter_showPassed__", type: 'checkbox' }),
+            showPassed = this.createDom('input', { id: "__jasmine_TrivialReporter_showPassed__", type: 'checkbox', checked: true}),
             this.createDom('label', { "for": "__jasmine_TrivialReporter_showPassed__" }, " passed "),
             showSkipped = this.createDom('input', { id: "__jasmine_TrivialReporter_showSkipped__", type: 'checkbox' }),
             this.createDom('label', { "for": "__jasmine_TrivialReporter_showSkipped__" }, " skipped")

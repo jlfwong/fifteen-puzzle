@@ -61,24 +61,23 @@ class @SolverStateMinHeap
 
   empty: -> (@data.length == 0)
 
-@solve = (startGrid, {complete, error}) ->
+@solve = (startGrid, {complete, error, frontier}) ->
   complete ?= $.noop
   error ?= $.noop
 
-  frontier = new SolverStateMinHeap
-
-  startState = new SolverState(startGrid, [])
-
-  frontier.enqueue startState
+  if not frontier?
+    frontier = new SolverStateMinHeap
+    startState = new SolverState(startGrid, [])
+    frontier.enqueue startState
 
   its = 0
 
   while not frontier.empty()
     its += 1
-    if its > 100
-      error {
-        msg: 'No solution found'
-      }
+    if its > 10000
+      window.setTimeout ->
+        solve startGrid, {complete, error, frontier}
+      , 10
       return
 
     curState = frontier.dequeue()
